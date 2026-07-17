@@ -1,371 +1,222 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Realistik Penalti O'yini</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background: #111;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-        h1 {
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-        #game-container {
-            position: relative;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 4px solid #4CAF50;
-        }
-        canvas {
-            display: block;
-            background: radial-gradient(circle, #2e7d32 40%, #1b5e20 100%);
-        }
-        .scoreboard {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 20px;
-            background: rgba(0, 0, 0, 0.75);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border: 2px solid #4CAF50;
-            pointer-events: none;
-        }
-        .score-val {
-            color: #4CAF50;
-        }
-        .miss-val {
-            color: #f44336;
-        }
-        #instructions {
-            margin-top: 15px;
-            color: #aaa;
-            font-size: 0.95rem;
-            text-align: center;
-        }
-        .controls {
-            margin-top: 15px;
-            display: flex;
-            gap: 15px;
-        }
-        button {
-            background: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        button:hover {
-            background: #45a049;
-            transform: scale(1.05);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Penalty Master</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
 </head>
+
 <body>
 
-    <h1>🏆 REALISTIK PENALTI</h1>
-    
-    <div id="game-container">
-        <div class="scoreboard">
-            <div>GOL: <span class="score-val" id="goals">0</span></div>
-            <div>QAYTARILDI: <span class="miss-val" id="saves">0</span></div>
-        </div>
-        <canvas id="gameCanvas" width="800" height="500"></canvas>
-    </div>
+<div id="loading">
 
-    <div class="controls">
-        <button onclick="resetGame()">Qaytadan boshlash</button>
-    </div>
+<h1>PENALTY MASTER</h1>
 
-    <p id="instructions">To'pni sichqoncha bilan ushlab, darvoza tomonga qarab tezda tortib otib yuboring (Flick)!</p>
+<div class="loader"></div>
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+<p>Loading Stadium...</p>
 
-        // O'yin holati
-        let score = 0;
-        let saves = 0;
-        
-        const goal = { x: 150, y: 50, width: 500, height: 200 };
-        const keeper = { x: 400, y: 150, radius: 25, targetX: 400, speed: 8, diving: false };
-        const ball = { 
-            startX: 400, 
-            startY: 420, 
-            x: 400, 
-            y: 420, 
-            radius: 15, 
-            vx: 0, 
-            vy: 0, 
-            scale: 1, 
-            isShot: false,
-            spinning: 0
-        };
+</div>
 
-        let isDragging = false;
-        let dragStart = { x: 0, y: 0 };
 
-        // Voqealarni tinglash
-        canvas.addEventListener('mousedown', startDrag);
-        canvas.addEventListener('mousemove', drag);
-        canvas.addEventListener('mouseup', releaseBall);
+<div id="menu">
 
-        canvas.addEventListener('touchstart', (e) => startDrag(e.touches[0]));
-        canvas.addEventListener('touchmove', (e) => drag(e.touches[0]));
-        canvas.addEventListener('touchend', () => releaseBall());
+<h1>⚽ PENALTY MASTER ⚽</h1>
 
-        function startDrag(e) {
-            if (ball.isShot) return;
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+<button id="playBtn">
+START GAME
+</button>
 
-            // To'pni bosgandagina tortishni boshlash
-            const dist = Math.hypot(mouseX - ball.x, mouseY - ball.y);
-            if (dist < ball.radius * 2) {
-                isDragging = true;
-                dragStart = { x: mouseX, y: mouseY };
-            }
-        }
+<button id="settingBtn">
+SETTINGS
+</button>
 
-        function drag(e) {
-            if (!isDragging) return;
-            const rect = canvas.getBoundingClientRect();
-            // Faqat vizual effekt berish uchun biroz siljitish
-        }
+<button id="scoreBtn">
+LEADERBOARD
+</button>
 
-        function releaseBall(e) {
-            if (!isDragging) return;
-            isDragging = false;
+<button id="aboutBtn">
+ABOUT
+</button>
 
-            const rect = canvas.getBoundingClientRect();
-            // Oxirgi nuqtani aniqlash (mouseup nuqtasi)
-            const endX = (e ? e.clientX : window.event.clientX) - rect.left;
-            const endY = (e ? e.clientY : window.event.clientY) - rect.top;
+</div>
 
-            // Otish kuchi va yo'nalishi
-            const dx = endX - dragStart.x;
-            const dy = endY - dragStart.y;
-            
-            if (dy < -20) { // Faqat oldinga otganda
-                ball.vx = dx * 0.15;
-                ball.vy = dy * 0.15;
-                ball.isShot = true;
 
-                // Darvozabon qaror qabul qiladi
-                keeperDecision();
-            }
-        }
 
-        function keeperDecision() {
-            keeper.diving = true;
-            // Darvozabon to'p ketayotgan tarafga sakraydi, lekin biroz xato qilishi mumkin
-            const targetX = ball.startX + (ball.vx * 15);
-            // Tasodifiy xatolik qo'shish (realizm uchun)
-            const error = (Math.random() - 0.5) * 80;
-            keeper.targetX = Math.max(goal.x, Math.min(goal.x + goal.width, targetX + error));
-        }
+<div id="game">
 
-        function resetRound() {
-            ball.x = ball.startX;
-            ball.y = ball.startY;
-            ball.vx = 0;
-            ball.vy = 0;
-            ball.scale = 1;
-            ball.isShot = false;
-            
-            keeper.targetX = 400;
-            keeper.diving = false;
-        }
+<div id="hud">
 
-        function resetGame() {
-            score = 0;
-            saves = 0;
-            document.getElementById('goals').innerText = score;
-            document.getElementById('saves').innerText = saves;
-            resetRound();
-        }
+<div class="left">
 
-        // To'qnashuvni tekshirish
-        function checkCollision() {
-            // Darvozabon to'pni qaytardimi?
-            const distToKeeper = Math.hypot(ball.x - keeper.x, ball.y - keeper.y);
-            if (distToKeeper < keeper.radius + ball.radius) {
-                saves++;
-                document.getElementById('saves').innerText = saves;
-                showNotification("Darvozabon qaytardi! 🧤");
-                resetRound();
-                return;
-            }
+<div class="scoreBox">
 
-            // To'p darvozaga kirdimi?
-            if (ball.y < goal.y + goal.height && ball.y > goal.y) {
-                if (ball.x > goal.x && ball.x < goal.x + goal.width) {
-                    score++;
-                    document.getElementById('goals').innerText = score;
-                    showNotification("GOOOL! ⚽🔥");
-                    resetRound();
-                    return;
-                }
-            }
+Gol
 
-            // Maydondan tashqariga ketib qolsa
-            if (ball.y < 0 || ball.x < 0 || ball.x > canvas.width) {
-                saves++;
-                document.getElementById('saves').innerText = saves;
-                showNotification("Noaniq zarba! ❌");
-                resetRound();
-            }
-        }
+<span id="score">
 
-        function showNotification(text) {
-            ctx.fillStyle = "white";
-            ctx.font = "bold 30px Arial";
-            ctx.textAlign = "center";
-            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-        }
+0
 
-        // Chizish va Yangilash
-        function update() {
-            // Darvozabon harakati
-            if (keeper.diving) {
-                keeper.x += (keeper.targetX - keeper.x) * 0.12;
-            } else {
-                // Darvozabon markazga sekin qaytadi
-                keeper.x += (400 - keeper.x) * 0.05;
-            }
+</span>
 
-            // To'p harakati
-            if (ball.isShot) {
-                ball.x += ball.vx;
-                ball.y += ball.vy;
-                ball.scale -= 0.01; // To'p uzoqlashgani sari kichrayadi (3D effekt)
-                ball.spinning += 0.2;
+</div>
 
-                if (ball.scale < 0.4) ball.scale = 0.4;
+<div class="lifeBox">
 
-                // To'qnashuvlarni tekshirish faqat darvoza chizig'iga yaqinlashganda
-                if (ball.y < 200) {
-                    checkCollision();
-                }
-            }
-        }
+❤️
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+<span id="life">
 
-            // 1. Maydon chiziqlari va o't teksturasi
-            ctx.strokeStyle = "rgba(255,255,255,0.4)";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(50, 450, 700, 50); // jarima maydoni qismi
+5
 
-            // 2. Darvoza (Orqa to'r effekti bilan)
-            ctx.fillStyle = "rgba(255,255,255,0.15)";
-            ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
-            
-            // To'r chiziqlari
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-            ctx.lineWidth = 1;
-            for (let i = goal.x; i < goal.x + goal.width; i += 20) {
-                ctx.beginPath();
-                ctx.moveTo(i, goal.y);
-                ctx.lineTo(i, goal.y + goal.height);
-                ctx.stroke();
-            }
-            for (let i = goal.y; i < goal.y + goal.height; i += 20) {
-                ctx.beginPath();
-                ctx.moveTo(goal.x, i);
-                ctx.lineTo(goal.x + goal.width, i);
-                ctx.stroke();
-            }
+</span>
 
-            // Darvoza ustunlari va to'sini
-            ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 8;
-            ctx.strokeRect(goal.x, goal.y, goal.width, goal.height);
+</div>
 
-            // 3. Darvozabon (Qo'lqoplar va o'yinchi ko'rinishi)
-            ctx.fillStyle = "#ff9800";
-            ctx.beginPath();
-            ctx.arc(keeper.x, keeper.y, keeper.radius, 0, Math.PI * 2);
-            ctx.fill();
-            // Ko'zlari
-            ctx.fillStyle = "black";
-            ctx.beginPath();
-            ctx.arc(keeper.x - 8, keeper.y - 5, 3, 0, Math.PI * 2);
-            ctx.arc(keeper.x + 8, keeper.y - 5, 3, 0, Math.PI * 2);
-            ctx.fill();
+</div>
 
-            // 4. To'pni chizish
-            ctx.save();
-            ctx.translate(ball.x, ball.y);
-            ctx.scale(ball.scale, ball.scale);
-            ctx.rotate(ball.spinning);
 
-            // To'p soyasi (realizm uchun)
-            ctx.fillStyle = "rgba(0,0,0,0.3)";
-            ctx.beginPath();
-            ctx.arc(5, 5, ball.radius, 0, Math.PI * 2);
-            ctx.fill();
+<div class="right">
 
-            // Oq to'p asosi
-            ctx.fillStyle = "#ffffff";
-            ctx.beginPath();
-            ctx.arc(0, 0, ball.radius, 0, Math.PI * 2);
-            ctx.fill();
+<div class="levelBox">
 
-            // To'p ustidagi qora chiziqlar/shashkalar
-            ctx.strokeStyle = "#333";
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(0, 0, ball.radius - 4, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.restore();
+Level
 
-            // Agar to'p tortilayotgan bo'lsa yo'naltiruvchi chiziq (Aim)
-            if (isDragging) {
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
-                ctx.lineWidth = 2;
-                ctx.setLineDash([5, 5]);
-                ctx.beginPath();
-                ctx.moveTo(ball.x, ball.y);
-                ctx.lineTo(ball.x - (dragStart.x - ball.x), ball.y - (dragStart.y - ball.y));
-                ctx.stroke();
-                ctx.setLineDash([]);
-            }
-        }
+<span id="level">
 
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
+Easy
 
-        gameLoop();
-    </script>
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+<div id="stadium">
+
+<div id="goal">
+
+<div id="net"></div>
+
+<div id="keeper"></div>
+
+<div id="ball"></div>
+
+</div>
+
+</div>
+
+
+
+<div id="controls">
+
+<button class="shoot" data-dir="left">
+
+⬅
+
+</button>
+
+<button class="shoot" data-dir="center">
+
+⬆
+
+</button>
+
+<button class="shoot" data-dir="right">
+
+➡
+
+</button>
+
+</div>
+
+
+
+<div id="message">
+
+Shoot!
+
+</div>
+
+
+</div>
+
+
+
+<div id="resultScreen">
+
+<h1 id="resultTitle">
+
+GAME OVER
+
+</h1>
+
+<h2>
+
+Score
+
+<span id="finalScore">
+
+0
+
+</span>
+
+</h2>
+
+<button id="restart">
+
+PLAY AGAIN
+
+</button>
+
+</div>
+
+
+
+
+<audio id="kick">
+
+<source src="assets/sounds/kick.mp3">
+
+</audio>
+
+<audio id="goalSound">
+
+<source src="assets/sounds/goal.mp3">
+
+</audio>
+
+<audio id="saveSound">
+
+<source src="assets/sounds/save.mp3">
+
+</audio>
+
+<audio id="crowdSound" loop>
+
+<source src="assets/sounds/crowd.mp3">
+
+</audio>
+
+<audio id="music" loop>
+
+<source src="assets/sounds/music.mp3">
+
+</audio>
+
+<script src="script.js"></script>
+
 </body>
 </html>
