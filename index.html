@@ -3,208 +3,369 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penaltilar Seriyasi ⚽</title>
+    <title>Realistik Penalti O'yini</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1b4332, #081c15);
-            color: white;
+            background: #111;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            margin: 0;
+            overflow: hidden;
         }
-
         h1 {
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
-
-        .scoreboard {
-            font-size: 20px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
-            border-radius: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-
-        /* Darvoza maydoni */
-        .pitch {
+        #game-container {
             position: relative;
-            width: 400px;
-            height: 250px;
-            background: #2d6a4f;
-            border: 4px solid white;
-            border-bottom: none;
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border: 4px solid #4CAF50;
         }
-
-        /* Darvozabon */
-        .goalkeeper {
+        canvas {
+            display: block;
+            background: radial-gradient(circle, #2e7d32 40%, #1b5e20 100%);
+        }
+        .scoreboard {
             position: absolute;
-            bottom: 10px;
-            width: 60px;
-            height: 80px;
-            background-color: #ffb703;
-            border-radius: 10px;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            align-items: center;
-            justify-content: center;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 1.2rem;
             font-weight: bold;
-            font-size: 24px;
-            transition: all 0.5s ease-in-out;
-            z-index: 10;
+            border: 2px solid #4CAF50;
+            pointer-events: none;
         }
-
-        /* To'p */
-        .ball {
-            position: absolute;
-            bottom: -50px; /* Zarbaga qadar ko'rinmasligi uchun */
-            width: 30px;
-            height: 30px;
-            background: white;
-            border-radius: 50%;
-            border: 2px solid black;
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            z-index: 5;
+        .score-val {
+            color: #4CAF50;
         }
-
-        /* Boshqaruv tugmalari */
+        .miss-val {
+            color: #f44336;
+        }
+        #instructions {
+            margin-top: 15px;
+            color: #aaa;
+            font-size: 0.95rem;
+            text-align: center;
+        }
         .controls {
-            margin-top: 30px;
+            margin-top: 15px;
             display: flex;
             gap: 15px;
         }
-
-        .btn {
-            background-color: #40916c;
-            color: white;
+        button {
+            background: #4CAF50;
             border: none;
-            padding: 12px 25px;
-            font-size: 16px;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1rem;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
         }
-
-        .btn:hover {
-            background-color: #52b788;
-        }
-
-        /* Xabar paneli */
-        .message {
-            margin-top: 20px;
-            font-size: 22px;
-            font-weight: bold;
-            height: 30px;
-            text-shadow: 1px 1px 2px black;
+        button:hover {
+            background: #45a049;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
 
-    <h1>⚽ Penaltilar Seriyasi</h1>
+    <h1>🏆 REALISTIK PENALTI</h1>
     
-    <div class="scoreboard">
-        Gollar: <span id="goals">0</span> | Qaytarildi: <span id="saves">0</span>
+    <div id="game-container">
+        <div class="scoreboard">
+            <div>GOL: <span class="score-val" id="goals">0</span></div>
+            <div>QAYTARILDI: <span class="miss-val" id="saves">0</span></div>
+        </div>
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
     </div>
-
-    <div class="pitch">
-        <!-- Darvozabon -->
-        <div id="gk" class="goalkeeper">🧤</div>
-        <!-- To'p -->
-        <div id="ball" class="ball" style="bottom: 20px; left: 185px;">⚽</div>
-    </div>
-
-    <div class="message" id="msg">Zarba berish uchun tomondan birini tanlang!</div>
 
     <div class="controls">
-        <button class="btn" onclick="shoot('chap')">👈 Chapga</button>
-        <button class="btn" onclick="shoot('markaz')">👆 Markazga</button>
-        <button class="btn" onclick="shoot('ong')">O'ngga 👉</button>
+        <button onclick="resetGame()">Qaytadan boshlash</button>
     </div>
 
+    <p id="instructions">To'pni sichqoncha bilan ushlab, darvoza tomonga qarab tezda tortib otib yuboring (Flick)!</p>
+
     <script>
-        let goals = 0;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // O'yin holati
+        let score = 0;
         let saves = 0;
-        let isShooting = false;
+        
+        const goal = { x: 150, y: 50, width: 500, height: 200 };
+        const keeper = { x: 400, y: 150, radius: 25, targetX: 400, speed: 8, diving: false };
+        const ball = { 
+            startX: 400, 
+            startY: 420, 
+            x: 400, 
+            y: 420, 
+            radius: 15, 
+            vx: 0, 
+            vy: 0, 
+            scale: 1, 
+            isShot: false,
+            spinning: 0
+        };
 
-        const gk = document.getElementById('gk');
-        const ball = document.getElementById('ball');
-        const msg = document.getElementById('msg');
-        const goalsText = document.getElementById('goals');
-        const savesText = document.getElementById('saves');
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
 
-        // Darvozabonning boshlang'ich pozitsiyasi
-        gk.style.left = "170px"; 
+        // Voqealarni tinglash
+        canvas.addEventListener('mousedown', startDrag);
+        canvas.addEventListener('mousemove', drag);
+        canvas.addEventListener('mouseup', releaseBall);
 
-        function shoot(playerDirection) {
-            if (isShooting) return; // O'yin davomida qayta bosishni cheklash
-            isShooting = true;
+        canvas.addEventListener('touchstart', (e) => startDrag(e.touches[0]));
+        canvas.addEventListener('touchmove', (e) => drag(e.touches[0]));
+        canvas.addEventListener('touchend', () => releaseBall());
 
-            const directions = ['chap', 'markaz', 'ong'];
-            // Darvozabon tasodifiy tomonga sakraydi
-            const gkDirection = directions[Math.floor(Math.random() * 3)];
+        function startDrag(e) {
+            if (ball.isShot) return;
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
 
-            // Darvozabon va to'p animatsiyasi koordinatalari
-            let gkLeft = "170px";
-            let ballLeft = "185px";
-            let ballTop = "50px"; // Darvoza balandligi darajasiga boradi
+            // To'pni bosgandagina tortishni boshlash
+            const dist = Math.hypot(mouseX - ball.x, mouseY - ball.y);
+            if (dist < ball.radius * 2) {
+                isDragging = true;
+                dragStart = { x: mouseX, y: mouseY };
+            }
+        }
 
+        function drag(e) {
+            if (!isDragging) return;
+            const rect = canvas.getBoundingClientRect();
+            // Faqat vizual effekt berish uchun biroz siljitish
+        }
+
+        function releaseBall(e) {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const rect = canvas.getBoundingClientRect();
+            // Oxirgi nuqtani aniqlash (mouseup nuqtasi)
+            const endX = (e ? e.clientX : window.event.clientX) - rect.left;
+            const endY = (e ? e.clientY : window.event.clientY) - rect.top;
+
+            // Otish kuchi va yo'nalishi
+            const dx = endX - dragStart.x;
+            const dy = endY - dragStart.y;
+            
+            if (dy < -20) { // Faqat oldinga otganda
+                ball.vx = dx * 0.15;
+                ball.vy = dy * 0.15;
+                ball.isShot = true;
+
+                // Darvozabon qaror qabul qiladi
+                keeperDecision();
+            }
+        }
+
+        function keeperDecision() {
+            keeper.diving = true;
+            // Darvozabon to'p ketayotgan tarafga sakraydi, lekin biroz xato qilishi mumkin
+            const targetX = ball.startX + (ball.vx * 15);
+            // Tasodifiy xatolik qo'shish (realizm uchun)
+            const error = (Math.random() - 0.5) * 80;
+            keeper.targetX = Math.max(goal.x, Math.min(goal.x + goal.width, targetX + error));
+        }
+
+        function resetRound() {
+            ball.x = ball.startX;
+            ball.y = ball.startY;
+            ball.vx = 0;
+            ball.vy = 0;
+            ball.scale = 1;
+            ball.isShot = false;
+            
+            keeper.targetX = 400;
+            keeper.diving = false;
+        }
+
+        function resetGame() {
+            score = 0;
+            saves = 0;
+            document.getElementById('goals').innerText = score;
+            document.getElementById('saves').innerText = saves;
+            resetRound();
+        }
+
+        // To'qnashuvni tekshirish
+        function checkCollision() {
+            // Darvozabon to'pni qaytardimi?
+            const distToKeeper = Math.hypot(ball.x - keeper.x, ball.y - keeper.y);
+            if (distToKeeper < keeper.radius + ball.radius) {
+                saves++;
+                document.getElementById('saves').innerText = saves;
+                showNotification("Darvozabon qaytardi! 🧤");
+                resetRound();
+                return;
+            }
+
+            // To'p darvozaga kirdimi?
+            if (ball.y < goal.y + goal.height && ball.y > goal.y) {
+                if (ball.x > goal.x && ball.x < goal.x + goal.width) {
+                    score++;
+                    document.getElementById('goals').innerText = score;
+                    showNotification("GOOOL! ⚽🔥");
+                    resetRound();
+                    return;
+                }
+            }
+
+            // Maydondan tashqariga ketib qolsa
+            if (ball.y < 0 || ball.x < 0 || ball.x > canvas.width) {
+                saves++;
+                document.getElementById('saves').innerText = saves;
+                showNotification("Noaniq zarba! ❌");
+                resetRound();
+            }
+        }
+
+        function showNotification(text) {
+            ctx.fillStyle = "white";
+            ctx.font = "bold 30px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+        }
+
+        // Chizish va Yangilash
+        function update() {
             // Darvozabon harakati
-            if (gkDirection === 'chap') gkLeft = "50px";
-            else if (gkDirection === 'ong') gkLeft = "290px";
-            else gkLeft = "170px";
+            if (keeper.diving) {
+                keeper.x += (keeper.targetX - keeper.x) * 0.12;
+            } else {
+                // Darvozabon markazga sekin qaytadi
+                keeper.x += (400 - keeper.x) * 0.05;
+            }
 
             // To'p harakati
-            if (playerDirection === 'chap') ballLeft = "70px";
-            else if (playerDirection === 'ong') ballLeft = "300px";
-            else ballLeft = "185px";
+            if (ball.isShot) {
+                ball.x += ball.vx;
+                ball.y += ball.vy;
+                ball.scale -= 0.01; // To'p uzoqlashgani sari kichrayadi (3D effekt)
+                ball.spinning += 0.2;
 
-            // Animatsiyani ishga tushirish
-            gk.style.left = gkLeft;
-            ball.style.left = ballLeft;
-            ball.style.bottom = "160px"; // Darvoza ichiga kirishi
+                if (ball.scale < 0.4) ball.scale = 0.4;
 
-            setTimeout(() => {
-                if (playerDirection === gkDirection) {
-                    // Darvozabon to'pni qaytardi
-                    saves++;
-                    savesText.innerText = saves;
-                    msg.innerHTML = "❌ SEYV! Darvozabon to'pni qaytardi!";
-                    msg.style.color = "#ff4d4d";
-                } else {
-                    // GOL!
-                    goals++;
-                    goalsText.innerText = goals;
-                    msg.innerHTML = "⚽ GOOOOOL!!! Ajoyib zarba!";
-                    msg.style.color = "#4ade80";
+                // To'qnashuvlarni tekshirish faqat darvoza chizig'iga yaqinlashganda
+                if (ball.y < 200) {
+                    checkCollision();
                 }
-
-                // 2 soniyadan keyin maydonni qayta tiklash
-                setTimeout(resetPitch, 2000);
-            }, 500);
+            }
         }
 
-        function resetPitch() {
-            gk.style.left = "170px";
-            ball.style.bottom = "20px";
-            ball.style.left = "185px";
-            msg.innerHTML = "Zarba berish uchun tomondan birini tanlang!";
-            msg.style.color = "white";
-            isShooting = false;
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Maydon chiziqlari va o't teksturasi
+            ctx.strokeStyle = "rgba(255,255,255,0.4)";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(50, 450, 700, 50); // jarima maydoni qismi
+
+            // 2. Darvoza (Orqa to'r effekti bilan)
+            ctx.fillStyle = "rgba(255,255,255,0.15)";
+            ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
+            
+            // To'r chiziqlari
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+            ctx.lineWidth = 1;
+            for (let i = goal.x; i < goal.x + goal.width; i += 20) {
+                ctx.beginPath();
+                ctx.moveTo(i, goal.y);
+                ctx.lineTo(i, goal.y + goal.height);
+                ctx.stroke();
+            }
+            for (let i = goal.y; i < goal.y + goal.height; i += 20) {
+                ctx.beginPath();
+                ctx.moveTo(goal.x, i);
+                ctx.lineTo(goal.x + goal.width, i);
+                ctx.stroke();
+            }
+
+            // Darvoza ustunlari va to'sini
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 8;
+            ctx.strokeRect(goal.x, goal.y, goal.width, goal.height);
+
+            // 3. Darvozabon (Qo'lqoplar va o'yinchi ko'rinishi)
+            ctx.fillStyle = "#ff9800";
+            ctx.beginPath();
+            ctx.arc(keeper.x, keeper.y, keeper.radius, 0, Math.PI * 2);
+            ctx.fill();
+            // Ko'zlari
+            ctx.fillStyle = "black";
+            ctx.beginPath();
+            ctx.arc(keeper.x - 8, keeper.y - 5, 3, 0, Math.PI * 2);
+            ctx.arc(keeper.x + 8, keeper.y - 5, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 4. To'pni chizish
+            ctx.save();
+            ctx.translate(ball.x, ball.y);
+            ctx.scale(ball.scale, ball.scale);
+            ctx.rotate(ball.spinning);
+
+            // To'p soyasi (realizm uchun)
+            ctx.fillStyle = "rgba(0,0,0,0.3)";
+            ctx.beginPath();
+            ctx.arc(5, 5, ball.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Oq to'p asosi
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.arc(0, 0, ball.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // To'p ustidagi qora chiziqlar/shashkalar
+            ctx.strokeStyle = "#333";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, ball.radius - 4, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // Agar to'p tortilayotgan bo'lsa yo'naltiruvchi chiziq (Aim)
+            if (isDragging) {
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(ball.x, ball.y);
+                ctx.lineTo(ball.x - (dragStart.x - ball.x), ball.y - (dragStart.y - ball.y));
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
         }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
     </script>
-
 </body>
 </html>
