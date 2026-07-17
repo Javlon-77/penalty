@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penaltilar Seriyasi ⚽</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1b4332, #081c15);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .scoreboard {
+            font-size: 20px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        /* Darvoza maydoni */
+        .pitch {
+            position: relative;
+            width: 400px;
+            height: 250px;
+            background: #2d6a4f;
+            border: 4px solid white;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Darvozabon */
+        .goalkeeper {
+            position: absolute;
+            bottom: 10px;
+            width: 60px;
+            height: 80px;
+            background-color: #ffb703;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 24px;
+            transition: all 0.5s ease-in-out;
+            z-index: 10;
+        }
+
+        /* To'p */
+        .ball {
+            position: absolute;
+            bottom: -50px; /* Zarbaga qadar ko'rinmasligi uchun */
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid black;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 5;
+        }
+
+        /* Boshqaruv tugmalari */
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            background-color: #40916c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background-color: #52b788;
+        }
+
+        /* Xabar paneli */
+        .message {
+            margin-top: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            height: 30px;
+            text-shadow: 1px 1px 2px black;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>⚽ Penaltilar Seriyasi</h1>
+    
+    <div class="scoreboard">
+        Gollar: <span id="goals">0</span> | Qaytarildi: <span id="saves">0</span>
+    </div>
+
+    <div class="pitch">
+        <!-- Darvozabon -->
+        <div id="gk" class="goalkeeper">🧤</div>
+        <!-- To'p -->
+        <div id="ball" class="ball" style="bottom: 20px; left: 185px;">⚽</div>
+    </div>
+
+    <div class="message" id="msg">Zarba berish uchun tomondan birini tanlang!</div>
+
+    <div class="controls">
+        <button class="btn" onclick="shoot('chap')">👈 Chapga</button>
+        <button class="btn" onclick="shoot('markaz')">👆 Markazga</button>
+        <button class="btn" onclick="shoot('ong')">O'ngga 👉</button>
+    </div>
+
+    <script>
+        let goals = 0;
+        let saves = 0;
+        let isShooting = false;
+
+        const gk = document.getElementById('gk');
+        const ball = document.getElementById('ball');
+        const msg = document.getElementById('msg');
+        const goalsText = document.getElementById('goals');
+        const savesText = document.getElementById('saves');
+
+        // Darvozabonning boshlang'ich pozitsiyasi
+        gk.style.left = "170px"; 
+
+        function shoot(playerDirection) {
+            if (isShooting) return; // O'yin davomida qayta bosishni cheklash
+            isShooting = true;
+
+            const directions = ['chap', 'markaz', 'ong'];
+            // Darvozabon tasodifiy tomonga sakraydi
+            const gkDirection = directions[Math.floor(Math.random() * 3)];
+
+            // Darvozabon va to'p animatsiyasi koordinatalari
+            let gkLeft = "170px";
+            let ballLeft = "185px";
+            let ballTop = "50px"; // Darvoza balandligi darajasiga boradi
+
+            // Darvozabon harakati
+            if (gkDirection === 'chap') gkLeft = "50px";
+            else if (gkDirection === 'ong') gkLeft = "290px";
+            else gkLeft = "170px";
+
+            // To'p harakati
+            if (playerDirection === 'chap') ballLeft = "70px";
+            else if (playerDirection === 'ong') ballLeft = "300px";
+            else ballLeft = "185px";
+
+            // Animatsiyani ishga tushirish
+            gk.style.left = gkLeft;
+            ball.style.left = ballLeft;
+            ball.style.bottom = "160px"; // Darvoza ichiga kirishi
+
+            setTimeout(() => {
+                if (playerDirection === gkDirection) {
+                    // Darvozabon to'pni qaytardi
+                    saves++;
+                    savesText.innerText = saves;
+                    msg.innerHTML = "❌ SEYV! Darvozabon to'pni qaytardi!";
+                    msg.style.color = "#ff4d4d";
+                } else {
+                    // GOL!
+                    goals++;
+                    goalsText.innerText = goals;
+                    msg.innerHTML = "⚽ GOOOOOL!!! Ajoyib zarba!";
+                    msg.style.color = "#4ade80";
+                }
+
+                // 2 soniyadan keyin maydonni qayta tiklash
+                setTimeout(resetPitch, 2000);
+            }, 500);
+        }
+
+        function resetPitch() {
+            gk.style.left = "170px";
+            ball.style.bottom = "20px";
+            ball.style.left = "185px";
+            msg.innerHTML = "Zarba berish uchun tomondan birini tanlang!";
+            msg.style.color = "white";
+            isShooting = false;
+        }
+    </script>
+
+</body>
+</html>
