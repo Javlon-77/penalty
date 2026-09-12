@@ -1,200 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Penalty Simulator - AAA Football Game</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Penalty — Cinematic 3D</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="gameContainer">
-        <canvas id="renderCanvas"></canvas>
-        
-        <!-- HUD -->
-        <div class="hud">
-            <!-- Top Left Stats -->
-            <div class="hud-panel top-left">
-                <div class="stat-block">
-                    <div class="stat-label">SCORE</div>
-                    <div class="stat-value" id="hudScore">0</div>
-                </div>
-                <div class="stat-block">
-                    <div class="stat-label">STREAK</div>
-                    <div class="stat-value" id="hudStreak">0</div>
-                </div>
-                <div class="stat-block">
-                    <div class="stat-label">ACCURACY</div>
-                    <div class="stat-value" id="hudAccuracy">0%</div>
-                </div>
-            </div>
+  <div id="game">
+    <canvas id="renderCanvas"></canvas>
 
-            <!-- Top Right -->
-            <div class="hud-panel top-right">
-                <div class="difficulty-badge" id="difficultyBadge">AMATEUR</div>
-            </div>
-
-            <!-- Center Bottom - Shot Indicator -->
-            <div class="hud-panel center-bottom">
-                <div class="instruction-text" id="instructionText">
-                    MOVE MOUSE TO AIM • LEFT CLICK TO SHOOT
-                </div>
-                <div class="power-meter">
-                    <div class="power-bar" id="powerBar"></div>
-                </div>
-            </div>
-
-            <!-- Aiming Reticle -->
-            <div class="aiming-reticle" id="aimingReticle">
-                <div class="crosshair"></div>
-                <div class="circle-outer"></div>
-            </div>
-
-            <!-- Challenge Tracker -->
-            <div class="hud-panel bottom-left">
-                <div class="challenge-tracker">
-                    <div class="challenge-label">CURRENT CHALLENGE</div>
-                    <div class="challenge-name" id="currentChallenge">None</div>
-                    <div class="challenge-progress" id="challengeProgress"></div>
-                </div>
-            </div>
-
-            <!-- Event Notification -->
-            <div class="event-notification" id="eventNotification"></div>
-        </div>
-
-        <!-- Main Menu -->
-        <div class="menu-overlay" id="mainMenu">
-            <div class="menu-container">
-                <div class="menu-header">
-                    <h1>⚽ ELITE PENALTY SIMULATOR</h1>
-                    <p>Experience Professional Football</p>
-                </div>
-
-                <div class="menu-buttons">
-                    <button class="menu-button primary" onclick="GameUI.startPractice()">
-                        <span>PRACTICE MODE</span>
-                        <small>Unlimited Penalties</small>
-                    </button>
-                    <button class="menu-button primary" onclick="GameUI.startShootout()">
-                        <span>PENALTY SHOOTOUT</span>
-                        <small>5v5 Competition</small>
-                    </button>
-                    <button class="menu-button secondary" onclick="GameUI.showChallenges()">
-                        <span>CHALLENGES</span>
-                        <small>30+ Objectives</small>
-                    </button>
-                    <button class="menu-button secondary" onclick="GameUI.showSettings()">
-                        <span>SETTINGS</span>
-                        <small>Graphics & Difficulty</small>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Settings Menu -->
-        <div class="menu-overlay menu-hidden" id="settingsMenu">
-            <div class="menu-container">
-                <div class="menu-header">
-                    <h2>SETTINGS</h2>
-                </div>
-
-                <div class="settings-section">
-                    <h3>DIFFICULTY</h3>
-                    <div class="difficulty-grid">
-                        <button class="difficulty-btn active" onclick="GameUI.setDifficulty('Amateur')">AMATEUR</button>
-                        <button class="difficulty-btn" onclick="GameUI.setDifficulty('SemiPro')">SEMI-PRO</button>
-                        <button class="difficulty-btn" onclick="GameUI.setDifficulty('Professional')">PRO</button>
-                        <button class="difficulty-btn" onclick="GameUI.setDifficulty('WorldClass')">ELITE</button>
-                        <button class="difficulty-btn" onclick="GameUI.setDifficulty('Legendary')">LEGENDARY</button>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <h3>GRAPHICS</h3>
-                    <div class="graphics-grid">
-                        <button class="graphics-btn" onclick="GameUI.setGraphics('Low')">LOW</button>
-                        <button class="graphics-btn active" onclick="GameUI.setGraphics('Medium')">MEDIUM</button>
-                        <button class="graphics-btn" onclick="GameUI.setGraphics('High')">HIGH</button>
-                        <button class="graphics-btn" onclick="GameUI.setGraphics('Ultra')">ULTRA</button>
-                    </div>
-                </div>
-
-                <div class="menu-buttons">
-                    <button class="menu-button secondary" onclick="GameUI.closeSettings()">BACK</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Challenges Menu -->
-        <div class="menu-overlay menu-hidden" id="challengesMenu">
-            <div class="menu-container">
-                <div class="menu-header">
-                    <h2>CHALLENGES</h2>
-                    <p id="challengeStats">0/30 COMPLETED</p>
-                </div>
-
-                <div class="challenges-grid" id="challengesGrid">
-                    <!-- Populated by JavaScript -->
-                </div>
-
-                <div class="menu-buttons">
-                    <button class="menu-button secondary" onclick="GameUI.closeChallenges()">BACK</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Shootout Scoreboard -->
-        <div class="shootout-overlay menu-hidden" id="shootoutOverlay">
-            <div class="shootout-scoreboard" id="shootoutScoreboard">
-                <!-- Populated by JavaScript -->
-            </div>
-        </div>
-
-        <!-- Game Over Screen -->
-        <div class="menu-overlay menu-hidden" id="gameOverScreen">
-            <div class="menu-container">
-                <div class="game-over-content">
-                    <h2 id="gameOverTitle">GAME OVER</h2>
-                    <div class="game-over-stats">
-                        <div class="stat-line">
-                            <span>Final Score:</span>
-                            <span id="gameOverScore">0</span>
-                        </div>
-                        <div class="stat-line">
-                            <span>Total Shots:</span>
-                            <span id="gameOverShots">0</span>
-                        </div>
-                        <div class="stat-line">
-                            <span>Accuracy:</span>
-                            <span id="gameOverAccuracy">0%</span>
-                        </div>
-                        <div class="stat-line">
-                            <span>Best Streak:</span>
-                            <span id="gameOverBestStreak">0</span>
-                        </div>
-                    </div>
-
-                    <div class="menu-buttons">
-                        <button class="menu-button primary" onclick="GameUI.returnToMenu()">MAIN MENU</button>
-                        <button class="menu-button secondary" onclick="GameUI.playAgain()">PLAY AGAIN</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div id="loading" class="screen">
+      <div class="loader-card">
+        <div class="brand-mark">P</div>
+        <div class="eyebrow">NEXT-GEN PENALTY EXPERIENCE</div>
+        <h1>LOADING <span>STADIUM</span></h1>
+        <div class="progress"><i id="loadBar"></i></div>
+        <p id="loadText">Preparing GLB player model…</p>
+      </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/audio.js"></script>
-    <script src="js/stadium.js"></script>
-    <script src="js/player.js"></script>
-    <script src="js/goalkeeper.js"></script>
-    <script src="js/ball.js"></script>
-    <script src="js/camera.js"></script>
-    <script src="js/crowd.js"></script>
-    <script src="js/challenges.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/game.js"></script>
+    <div id="menu" class="screen hidden">
+      <div class="menu-card">
+        <div class="eyebrow">THREE.JS • GLTF / GLB • WEBGL</div>
+        <h1>PENALTY<br><span>ELITE</span></h1>
+        <p class="lead">A cinematic penalty-kick simulator with animated 3D players, reactive goalkeeper AI, stadium lighting and ball physics.</p>
+        <button id="playBtn" class="cta">TAKE PENALTY <b>→</b></button>
+        <div class="controls"><span>MOVE</span> Mouse / Touch <span>SHOOT</span> Hold + Release <span>PAUSE</span> ESC</div>
+      </div>
+      <div class="menu-foot"><span>ORIGINAL WEB GAME</span><span>GLTF 2.0 CHARACTER PIPELINE</span></div>
+    </div>
+
+    <div id="hud" class="hidden">
+      <div class="topbar">
+        <div class="scorebox"><small>SCORE</small><strong id="score">0</strong></div>
+        <div class="round"><span id="roundLabel">PENALTY 01</span><em id="difficulty">PRO</em></div>
+        <div class="stat"><small>STREAK</small><strong id="streak">0</strong></div>
+      </div>
+
+      <div class="aim"><div class="aim-ring"></div><div class="aim-dot"></div></div>
+
+      <div class="bottom-ui">
+        <div class="tip"><b id="tipTitle">AIM</b><span id="tipText">Move your cursor. Hold to charge power, release to shoot.</span></div>
+        <div class="power"><div class="power-label"><span>SHOT POWER</span><b id="powerValue">0%</b></div><div class="power-track"><i id="powerBar"></i></div></div>
+      </div>
+
+      <div id="result" class="result"></div>
+      <button id="pauseBtn" class="pause">Ⅱ</button>
+    </div>
+
+    <div id="pause" class="screen hidden">
+      <div class="pause-card"><div class="eyebrow">MATCH PAUSED</div><h2>READY?</h2><button id="resumeBtn" class="cta">RESUME <b>→</b></button><button id="menuBtn" class="ghost">MAIN MENU</button></div>
+    </div>
+
+    <div id="end" class="screen hidden">
+      <div class="end-card"><div class="eyebrow">PENALTY COMPLETE</div><h2 id="endTitle">GOAL</h2><div class="final-score"><small>TOTAL SCORE</small><strong id="finalScore">0</strong></div><div class="end-stats"><div><small>SHOTS</small><b id="finalShots">0</b></div><div><small>GOALS</small><b id="finalGoals">0</b></div><div><small>ACCURACY</small><b id="finalAccuracy">0%</b></div></div><button id="againBtn" class="cta">PLAY AGAIN <b>↻</b></button><button id="endMenuBtn" class="ghost">MAIN MENU</button></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="game.js"></script>
 </body>
 </html>
