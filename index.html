@@ -1,22 +1,10 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Penalty — Cinematic 3D</title>
-  <link rel="stylesheet" href="cinematic.css">
-</head>
-<body>
-  <div id="game">
-    <canvas id="renderCanvas"></canvas>
-    <div id="loading" class="screen"><div class="loader-card"><div class="brand-mark">P</div><div class="eyebrow">NEXT-GEN PENALTY EXPERIENCE</div><h1>LOADING <span>STADIUM</span></h1><div class="progress"><i id="loadBar"></i></div><p id="loadText">Preparing GLB player model…</p></div></div>
-    <div id="menu" class="screen hidden"><div class="menu-card"><div class="eyebrow">THREE.JS • GLTF / GLB • WEBGL</div><h1>PENALTY<br><span>ELITE</span></h1><p class="lead">A cinematic penalty-kick simulator with animated 3D players, reactive goalkeeper AI, stadium lighting and ball physics.</p><button id="playBtn" class="cta">TAKE PENALTY <b>→</b></button><div class="controls"><span>MOVE</span> Mouse / Touch <span>SHOOT</span> Hold + Release <span>PAUSE</span> ESC</div></div><div class="menu-foot"><span>ORIGINAL WEB GAME</span><span>GLTF 2.0 CHARACTER PIPELINE</span></div></div>
-    <div id="hud" class="hidden"><div class="topbar"><div class="scorebox"><small>SCORE</small><strong id="score">0</strong></div><div class="round"><span id="roundLabel">PENALTY 01</span><em id="difficulty">PRO</em></div><div class="stat"><small>STREAK</small><strong id="streak">0</strong></div></div><div class="aim"><div class="aim-ring"></div><div class="aim-dot"></div></div><div class="bottom-ui"><div class="tip"><b id="tipTitle">AIM</b><span id="tipText">Move your cursor. Hold to charge power, release to shoot.</span></div><div class="power"><div class="power-label"><span>SHOT POWER</span><b id="powerValue">0%</b></div><div class="power-track"><i id="powerBar"></i></div></div></div><div id="result" class="result"></div><button id="pauseBtn" class="pause">Ⅱ</button></div>
-    <div id="pause" class="screen hidden"><div class="pause-card"><div class="eyebrow">MATCH PAUSED</div><h2>READY?</h2><button id="resumeBtn" class="cta">RESUME <b>→</b></button><button id="menuBtn" class="ghost">MAIN MENU</button></div></div>
-    <div id="end" class="screen hidden"><div class="end-card"><div class="eyebrow">PENALTY COMPLETE</div><h2 id="endTitle">GOAL</h2><div class="final-score"><small>TOTAL SCORE</small><strong id="finalScore">0</strong></div><div class="end-stats"><div><small>SHOTS</small><b id="finalShots">0</b></div><div><small>GOALS</small><b id="finalGoals">0</b></div><div><small>ACCURACY</small><b id="finalAccuracy">0%</b></div></div><button id="againBtn" class="cta">PLAY AGAIN <b>↻</b></button><button id="endMenuBtn" class="ghost">MAIN MENU</button></div></div>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="game.js"></script>
-</body>
-</html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Penalty — Cinematic 3D</title><link rel="stylesheet" href="cinematic.css"></head>
+<body><div id="game"><canvas id="renderCanvas"></canvas>
+<div id="loading" class="screen"><div class="loader-card"><div class="brand-mark">P</div><div class="eyebrow">NEXT-GEN PENALTY EXPERIENCE</div><h1>LOADING <span>STADIUM</span></h1><div class="progress"><i id="loadBar"></i></div><p id="loadText">Preparing GLB player model…</p></div></div>
+<div id="menu" class="screen hidden"><div class="menu-card"><div class="eyebrow">THREE.JS • GLTF / GLB • WEBGL</div><h1>PENALTY<br><span>ELITE</span></h1><p class="lead">A cinematic penalty-kick simulator with animated 3D players, reactive goalkeeper AI, stadium lighting and ball physics.</p><button id="playBtn" class="cta">TAKE PENALTY <b>→</b></button><div class="controls"><span>MOVE</span> Mouse / Touch <span>SHOOT</span> Hold + Release <span>PAUSE</span> ESC</div></div><div class="menu-foot"><span>ORIGINAL WEB GAME</span><span>GLTF 2.0 CHARACTER PIPELINE</span></div></div>
+<div id="hud" class="hidden"><div class="topbar"><div class="scorebox"><small>SCORE</small><strong id="score">0</strong></div><div class="round"><span id="roundLabel">PENALTY 01</span><em>PRO</em></div><div class="stat"><small>STREAK</small><strong id="streak">0</strong></div></div><div class="aim"><div class="aim-ring"></div><div class="aim-dot"></div></div><div class="bottom-ui"><div class="tip"><b>AIM</b><span>Move your cursor. Hold to charge power, release to shoot.</span></div><div class="power"><div class="power-label"><span>SHOT POWER</span><b id="powerValue">0%</b></div><div class="power-track"><i id="powerBar"></i></div></div></div><div id="result" class="result"></div><button id="pauseBtn" class="pause">Ⅱ</button></div>
+<div id="pause" class="screen hidden"><div class="pause-card"><div class="eyebrow">MATCH PAUSED</div><h2>READY?</h2><button id="resumeBtn" class="cta">RESUME <b>→</b></button><button id="menuBtn" class="ghost">MAIN MENU</button></div></div>
+<div id="end" class="screen hidden"><div class="end-card"><div class="eyebrow">PENALTY COMPLETE</div><h2 id="endTitle">GOAL</h2><div class="final-score"><small>TOTAL SCORE</small><strong id="finalScore">0</strong></div><div class="end-stats"><div><small>SHOTS</small><b id="finalShots">0</b></div><div><small>GOALS</small><b id="finalGoals">0</b></div><div><small>ACCURACY</small><b id="finalAccuracy">0%</b></div></div><button id="againBtn" class="cta">PLAY AGAIN <b>↻</b></button><button id="endMenuBtn" class="ghost">MAIN MENU</button></div></div>
+</div><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script><script src="game2.js"></script></body></html>
